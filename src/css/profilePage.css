@@ -1,0 +1,45 @@
+.profile {
+  background-color: #e2e2ee;
+  padding: 20px 0;
+}
+
+.profile-edit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 30px;
+}
+
+.profile-inputs {
+  display: flex;
+  gap: 1rem;
+}
+
+.profile-inputs input {
+  padding: 0.5rem;
+}
+
+.profile-inputs input::placeholder {
+  color: lightgray;
+}
+
+.profile-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.profile-buttons button {
+  padding: 5px 30px;
+  color: blueviolet;
+  font-weight: 600;
+  border: 1px solid blueviolet;
+  cursor: pointer;
+  width: 100px;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+}

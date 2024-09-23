@@ -1,0 +1,200 @@
+openapi: 3.0.3
+info:
+  title: Transactions API
+  description: |-
+    API pour la gestion des transactions des utilisateurs. 
+    Cette API permet aux utilisateurs de visualiser, ajouter, modifier et supprimer leurs transactions.
+  termsOfService: http://example.com/terms/
+  contact:
+    email: support@example.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001/api/v1
+tags:
+  - name: transactions
+    description: Opérations sur les transactions des utilisateurs
+paths:
+  /transactions:
+    get:
+      tags:
+        - transactions
+      summary: Récupérer toutes les transactions du mois en cours
+      description: Permet aux utilisateurs de visualiser toutes leurs transactions pour le mois en cours, groupées par compte.
+      operationId: getTransactions
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          description: ID de l'utilisateur
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Liste des transactions groupées par compte
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accountId:
+                    type: string
+                  transactions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Transaction"
+        "400":
+          description: Requete invalide userId manquant ou incorrect
+        "500":
+          description: Erreur interne du serveur
+
+    post:
+      tags:
+        - transactions
+      summary: Ajouter une nouvelle transaction
+      description: Permet aux utilisateurs d'ajouter une nouvelle transaction.
+      operationId: addTransaction
+      requestBody:
+        description: Création d'une nouvelle transaction
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionCreate"
+        required: true
+      responses:
+        "201":
+          description: Transaction créée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+        "400":
+          description: Requête invalide données de transaction incorrectes
+        "500":
+          description: Erreur interne du serveur
+
+  /transactions/{transactionId}:
+    get:
+      tags:
+        - transactions
+      summary: Récupérer les détails d'une transaction spécifique
+      description: Permet aux utilisateurs de visualiser les détails d'une transaction en particulier.
+      operationId: getTransactionById
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          description: ID de la transaction
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Détails de la transaction
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+        "404":
+          description: Transaction non trouvée
+        "500":
+          description: Erreur interne du serveur
+
+    put:
+      tags:
+        - transactions
+      summary: Modifier une transaction existante
+      description: Permet aux utilisateurs de modifier les informations d'une transaction existante.
+      operationId: updateTransaction
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          description: ID de la transaction
+          schema:
+            type: string
+      requestBody:
+        description: Mise à jour d'une transaction existante
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionUpdate"
+        required: true
+      responses:
+        "200":
+          description: Transaction mise à jour avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+        "400":
+          description: Requête invalide données de mise à jour incorrectes
+        "404":
+          description: Transaction non trouvée
+        "500":
+          description: Erreur interne du serveur
+
+    delete:
+      tags:
+        - transactions
+      summary: Supprimer une transaction existante
+      description: Permet aux utilisateurs de supprimer une transaction existante.
+      operationId: deleteTransaction
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          description: ID de la transaction
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Transaction supprimée avec succès
+        "404":
+          description: Transaction non trouvée
+        "500":
+          description: Erreur interne du serveur
+
+components:
+  schemas:
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: string
+        amount:
+          type: number
+        date:
+          type: string
+          format: date-time
+        description:
+          type: string
+    TransactionCreate:
+      type: object
+      required:
+        - accountId
+        - amount
+        - date
+      properties:
+        accountId:
+          type: string
+        amount:
+          type: number
+        date:
+          type: string
+          format: date-time
+        description:
+          type: string
+    TransactionUpdate:
+      type: object
+      properties:
+        amount:
+          type: number
+        date:
+          type: string
+          format: date-time
+        description:
+          type: string
