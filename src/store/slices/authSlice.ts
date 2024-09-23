@@ -13,7 +13,8 @@ const initialState: AuthState = {
   error: null,
 }
 
-//Contains synchronous actions (reducers) with createSlice
+// Handles synchronous actions that needs simple state changes
+// that don't require server interaction
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -30,7 +31,9 @@ const authSlice = createSlice({
       }
     },
   },
+
   //Handles asynchronous actions (thunks) with createAsyncThunk
+  //that require server interaction(fetch API)
   extraReducers: builder => {
     builder
       .addCase(

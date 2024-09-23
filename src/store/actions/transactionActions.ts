@@ -1,49 +1,46 @@
 // src/store/actions/transactionActions.ts
 
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import axios from "../axiosConfig"
-import {
-  Transaction,
-  TransactionState,
-  UpdateTransaction,
-} from "../../types/transaction"
+import { Transaction, UpdateTransaction } from "../../types/transaction"
+import { PaymentProviderDependencies } from "../../context/paymentProvider.dependencies"
 
-// Base URL for transactions endpoints
-const TRANSACTIONS_URL = "/transactions"
+// Define the shape of the extra argument
+interface ThunkApiConfig {
+  rejectValue: string
+  extra: PaymentProviderDependencies
+}
 
 // Fetch all transactions
 export const fetchTransactionsAsync = createAsyncThunk<
   Transaction[],
   void,
-  { rejectValue: string }
->("transactions/fetchTransactionsAsync", async (_, { rejectWithValue }) => {
-  try {
-    const response = await axios.get<Transaction[]>(TRANSACTIONS_URL)
-    return response.data
-  } catch (error: any) {
-    return rejectWithValue(
-      error.response?.data?.message || "Failed to fetch transactions",
-    )
-  }
-})
+  ThunkApiConfig
+>(
+  "transactions/fetchTransactionsAsync",
+  async (_, { rejectWithValue, extra }) => {
+    try {
+      const transactions = await extra.transactions.fetchTransactions()
+      return transactions
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to fetch transactions")
+    }
+  },
+)
 
 // Fetch a single transaction by ID
 export const fetchTransactionByIdAsync = createAsyncThunk<
   Transaction,
   number,
-  { rejectValue: string }
+  ThunkApiConfig
 >(
   "transactions/fetchTransactionByIdAsync",
-  async (transactionId, { rejectWithValue }) => {
+  async (transactionId, { rejectWithValue, extra }) => {
     try {
-      const response = await axios.get<Transaction>(
-        `${TRANSACTIONS_URL}/${transactionId}`,
-      )
-      return response.data
+      const transaction =
+        await extra.transactions.fetchTransactionById(transactionId)
+      return transaction
     } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch the transaction",
-      )
+      return rejectWithValue(error.message || "Failed to fetch the transaction")
     }
   },
 )
@@ -52,24 +49,17 @@ export const fetchTransactionByIdAsync = createAsyncThunk<
 export const createTransactionAsync = createAsyncThunk<
   Transaction,
   Omit<Transaction, "id">,
-  { rejectValue: string }
+  ThunkApiConfig
 >(
   "transactions/createTransactionAsync",
-  async (newTransaction, { rejectWithValue }) => {
+  async (newTransaction, { rejectWithValue, extra }) => {
     try {
-      const response = await axios.post<Transaction>(
-        TRANSACTIONS_URL,
-        newTransaction,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      )
-      return response.data
+      const transaction =
+        await extra.transactions.createTransaction(newTransaction)
+      return transaction
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to create the transaction",
+        error.message || "Failed to create the transaction",
       )
     }
   },
@@ -79,24 +69,19 @@ export const createTransactionAsync = createAsyncThunk<
 export const updateTransactionAsync = createAsyncThunk<
   Transaction,
   { id: number; data: Partial<Transaction> },
-  { rejectValue: string }
+  ThunkApiConfig
 >(
   "transactions/updateTransactionAsync",
-  async ({ id, data }, { rejectWithValue }) => {
+  async ({ id, data }, { rejectWithValue, extra }) => {
     try {
-      const response = await axios.put<Transaction>(
-        `${TRANSACTIONS_URL}/${id}`,
+      const updatedTransaction = await extra.transactions.updateTransaction(
+        id,
         data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
       )
-      return response.data
+      return updatedTransaction
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to update the transaction",
+        error.message || "Failed to update the transaction",
       )
     }
   },

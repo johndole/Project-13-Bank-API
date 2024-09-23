@@ -8,6 +8,6 @@ export type PaymentProviderDependencies = {
 export const paymentProviderDependencies: PaymentProviderDependencies = {
   transactions:
     process.env.NODE_ENV === "production"
-      ? new TransactionGateway()
+      ? new FakeTransactionGateway()
       : new FakeTransactionGateway(),
 }

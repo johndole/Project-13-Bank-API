@@ -5,13 +5,9 @@ import { User } from "../types"
 import BankAccountDetails from "../components/ui/BankAccountDetails"
 
 const Profile: React.FC = () => {
-  const { user, updateProfile, logoutUser } = useAuth()
+  const { user, updateProfile } = useAuth()
   const [firstName, setFirstName] = useState(user?.firstName)
   const [lastName, setLastName] = useState(user?.lastName || "")
-
-  const handleLogout = () => {
-    logoutUser()
-  }
 
   const handleUpdateProfile = async () => {
     const updatedUser: Partial<User> = { firstName, lastName }

@@ -1,11 +1,7 @@
 // src/store/slices/transactionSlice.ts
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import {
-  Transaction,
-  TransactionState,
-  UpdateTransaction,
-} from "../../types/transaction"
+import { Transaction, TransactionState } from "../../types/transaction"
 import {
   fetchTransactionsAsync,
   fetchTransactionByIdAsync,
@@ -22,9 +18,11 @@ const initialState: TransactionState = {
 const transactionSlice = createSlice({
   name: "transaction",
   initialState,
-  reducers: {
-    // You can add synchronous reducers here if needed
-  },
+  // Synchronous reducers
+
+  reducers: {},
+
+  // Asynchronous reducers
   extraReducers: builder => {
     // Fetch All Transactions
     builder
