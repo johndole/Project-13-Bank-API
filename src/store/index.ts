@@ -10,7 +10,7 @@ import {
 
 const store = configureStore({
   reducer: {
-    auth: authReducer,
+    auth: authReducer, // Ajout de la slice "auth" au store
     transaction: transactionReducer,
   },
   middleware: getDefaultMiddleware =>
